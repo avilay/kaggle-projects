@@ -1,0 +1,97 @@
+cmd: ???
+
+defaults:
+  - hparams: random
+
+app:
+  dataroot: /Users/avilay/mldata/higgs
+  data_csv: HIGGS.csv
+  train_csv: higgs_train.csv
+  test_csv: higgs_test.csv
+
+split:
+  infilepath: ${app.dataroot}/${app.data_csv}
+  path: ${app.dataroot}/${app.project}
+  train_csv: ${app.train_csv}
+  test_csv: ${app.test_csv}
+  train_test_split_frac: 0.9
+
+sandbox:
+  infilepath: ${app.dataroot}/${app.data_csv}
+  path: ???
+  size: 1000
+  data_csv: ${app.data_csv}
+  train_csv: ${app.train_csv}
+  test_csv: ${app.test_csv}
+  train_split_frac: 0.9
+
+train:
+  dataroot: ${app.dataroot}
+  train_csv: ${app.train_csv}
+  runroot: /Users/avilay/mlruns/higgs
+  train_val_split_frac: 0.9
+  name: auto
+  hparams: ${hparams}
+
+
+hydra:
+  run:
+    dir: __output__
+  output_subdir: ${now:%Y-%m-%d}/${now:%H-%M-%S}/.hydra
+  help:
+    app_name: Higgs Predictor
+    header: ${hydra.help.app_name}
+    template: |-
+      # ${hydra.help.header}
+      Predict the presence of higgs-boson particles in the dataset from https://archive.ics.uci.edu/ml/datasets/HIGGS.
+      Run one of the following commands:
+       - sandbox
+       - split
+       - train
+
+      ## python -m higgs.main --cmd=sandbox
+      This will create a sandbox data area with the data sampled from the main datafile. Override the values under the
+      `sandbox` section in the config shown below.
+
+      ### Examples
+      ```
+      python -m higgs.main --cmd=sandbox sandbox.path=/Users/avilay/temp/higgs
+      ```
+
+      This will create a three files under /Users/avilay/temp/higgs -
+        - HIGGS.csv: Contains 1000 instances sampled from the main data file /Users/avilay/mldata/higgs/HIGGS.csv.
+        - higgs_train.csv: Contains 90% of the instances from the newly sampled file.
+        - higgs_test.csv: Contains the remaining 10% of the instances.
+
+
+      ## python -m higgs.main --cmd=split
+      This will split the specified data file into two files -
+        - higgs_train.csv: Contains 90% of instances from the specified data file.
+        - higgs_test.csv: Contains the remaining 10% of instances.
+
+      ## python -m higgs.main --cmd=train
+      This will run the training by using the training file named `higgs_train.csv` in the specified `dataroot`. It will
+      create a directory named `Users/avilay/mlruns/higgs/{name}` if it does not exist and then store the lightning and wandb
+      logs. If the name is "auto" then the program will generate a random name. The default hyperparams are specified in
+      `hparams/random.yaml`.
+
+      ### Examples
+      To override some of the default hyperparams:
+      ```
+      python -m higgs.main --cmd=train hparams.n_epochs=10
+      ```
+      This will use the same hparams that are in `hparams/random.yaml` but will override the `n_epochs`.
+
+      To override the entire `random.yaml` file with `hparams/check.yaml`:
+      ```
+      python -m higgs.main --cmd=train hparams=check
+      ```
+      All custom hparams files must live in the `hparams` directory.
+
+      ## Full Config
+      -------
+      $CONFIG
+      -------
+
+
+

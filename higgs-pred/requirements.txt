@@ -1,0 +1,8 @@
+numpy
+torch
+pytorch-lightning
+pandas
+hydra
+haikunator
+plotly
+wandb

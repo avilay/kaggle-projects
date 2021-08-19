@@ -1,4 +1,4 @@
-n_epochs: 2
+n_epochs: 5
 batch_size: 5
 lr: 0.01
 true_cutoff: 0.5
