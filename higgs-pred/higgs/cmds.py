@@ -71,7 +71,7 @@ def split(cfg):
     df = df.sample(frac=1.0)
     train_csv = Path(cfg.path) / cfg.train_csv
     test_csv = Path(cfg.path) / cfg.test_csv
-    train_sz = int(len(df) * cfg.train_split_frac)
+    train_sz = int(len(df) * cfg.train_test_split_frac)
     train_df = df[:train_sz]
     test_df = df[train_sz:]
     logger.info(
