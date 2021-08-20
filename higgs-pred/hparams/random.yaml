@@ -1,4 +1,7 @@
-n_epochs: 5
-batch_size: 5
-lr: 0.01
-true_cutoff: 0.5
+model:
+  lr: 0.01
+  true_cutoff: 0.5
+
+trainer:
+  batch_size: 5
+  n_epochs: 5

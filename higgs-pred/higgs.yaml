@@ -2,6 +2,7 @@ cmd: ???
 
 defaults:
   - hparams: random
+  - _self_
 
 app:
   dataroot: /Users/avilay/mldata/higgs
@@ -30,6 +31,7 @@ train:
   train_csv: ${app.train_csv}
   runroot: /Users/avilay/mlruns/higgs
   train_val_split_frac: 0.9
+  logger: wandb
   name: auto
   hparams: ${hparams}
 

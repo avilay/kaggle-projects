@@ -7,7 +7,7 @@ import pandas as pd
 from haikunator import Haikunator
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks.model_checkpoint import ModelCheckpoint
-from pytorch_lightning.loggers import WandbLogger
+from pytorch_lightning.loggers import CSVLogger, WandbLogger
 
 from higgs.higgs_data_module import COLNAMES
 
@@ -25,29 +25,35 @@ def train(cfg):
         cfg.name = Haikunator().haikunate()
     train_csv = Path(cfg.dataroot) / cfg.train_csv
     logger.info(f"Starting run {cfg.name}")
-    model = HiggsClassifier(hp=cfg.hparams)
+    model = HiggsClassifier(hp=cfg.hparams.model)
     data = HiggsDataModule(
-        trainfile=train_csv, trainset_prop=cfg.train_val_split_frac, hp=cfg.hparams,
+        trainfile=train_csv,
+        trainset_prop=cfg.train_val_split_frac,
+        hp=cfg.hparams.trainer,
     )
     data.prepare()
     logger.info(
         f"Train set size: {data.trainsize}, Validation set size: {data.valsize}"
     )
     os.makedirs(cfg.runroot, exist_ok=True)
-    ml_logger = WandbLogger(
-        project="higgs",
-        name=cfg.name,
-        save_dir=cfg.runroot,
-        log_model="all",
-        id=cfg.name,
-    )
-    ml_logger.watch(model, log="all")
+
+    if cfg.logger == "wandb":
+        ml_logger = WandbLogger(
+            project="higgs",
+            name=cfg.name,
+            save_dir=cfg.runroot,
+            log_model="all",
+            id=cfg.name,
+        )
+        ml_logger.watch(model, log="all")
+    elif cfg.logger == "csv":
+        ml_logger = CSVLogger(save_dir=cfg.runroot, name="higgs", version=cfg.name)
 
     checkpoint = ModelCheckpoint(monitor="val_loss", mode="min")
     start = datetime.now()
     trainer = Trainer(
         default_root_dir=cfg.runroot,
-        max_epochs=cfg.hparams.n_epochs,
+        max_epochs=cfg.hparams.trainer.n_epochs,
         logger=ml_logger,
         callbacks=[checkpoint],
     )

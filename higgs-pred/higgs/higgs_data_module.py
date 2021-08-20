@@ -64,7 +64,8 @@ class HiggsDataModule(pl.LightningDataModule):
                 "At least one valid trainfile or testfile must be specified."
             )
 
-        self.hparams = hp
+        # self.hparams = hp
+        self.save_hyperparameters(hp)
 
         self._trainset_prop = trainset_prop
 
