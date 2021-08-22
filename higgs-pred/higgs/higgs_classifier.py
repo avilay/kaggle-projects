@@ -39,7 +39,8 @@ class HiggsClassifier(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         loss, acc = self._step(batch)
-        self.log("train_loss_step", loss)
+        if batch_idx % 1000 == 0:
+            self.log("train_loss_step", loss)
         self.log_dict(
             {"train_acc": acc, "train_loss": loss}, on_step=False, on_epoch=True
         )

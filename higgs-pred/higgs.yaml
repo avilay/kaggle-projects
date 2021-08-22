@@ -2,6 +2,7 @@ cmd: ???
 
 defaults:
   - hparams: random
+  - _self_
 
 app:
   dataroot: /Users/avilay/mldata/higgs
@@ -11,7 +12,7 @@ app:
 
 split:
   infilepath: ${app.dataroot}/${app.data_csv}
-  path: ${app.dataroot}/${app.project}
+  path: ${app.dataroot}
   train_csv: ${app.train_csv}
   test_csv: ${app.test_csv}
   train_test_split_frac: 0.9
@@ -30,6 +31,7 @@ train:
   train_csv: ${app.train_csv}
   runroot: /Users/avilay/mlruns/higgs
   train_val_split_frac: 0.9
+  logger: wandb
   name: auto
   hparams: ${hparams}
 
